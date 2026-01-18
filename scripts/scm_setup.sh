@@ -164,13 +164,13 @@ git_config() {
     elif [[ -t 0 || -r "${tty_in}" ]]; then
       local git_username
       if prompt "Enter your Git username: " git_username; then
-      [[ -n "$git_username" ]] || { error "Username can't be empty"; return 1; }
-      git config --global user.name "$git_username"
-      ok "Git user.name set."
+        [[ -n "$git_username" ]] || { error "Username can't be empty"; return 1; }
+        git config --global user.name "$git_username"
+        ok "Git user.name set."
+      else
+        warn "git user.name not set and no TTY available. Export GIT_USER_NAME to set it non-interactively."
+      fi
     else
-      warn "git user.name not set and no TTY available. Export GIT_USER_NAME to set it non-interactively."
-    fi
-  else
       warn "git user.name not set and no TTY available. Export GIT_USER_NAME to set it non-interactively."
     fi
   else
@@ -188,10 +188,10 @@ git_config() {
         while [[ -z "$git_email" ]]; do
           printf '%s\n' "Email can't be empty." >&2
           prompt "Enter your Git email: " git_email || break
-      done
+        done
         if [[ -n "$git_email" ]]; then
-      git config --global user.email "$git_email"
-      ok "Git user.email set."
+          git config --global user.email "$git_email"
+          ok "Git user.email set."
         fi
       else
         warn "git user.email not set and no TTY available. Export GIT_USER_EMAIL to set it non-interactively."
@@ -205,6 +205,12 @@ git_config() {
 
   # Helpful defaults
   git config --global init.defaultBranch main >/dev/null 2>&1 || true
+  # Avoid Git asking how to reconcile divergent branches. Our stance is:
+  # - GitHub is authoritative
+  # - Updates are fast-forward only
+  # - If the local repo is ahead/diverged, we report and stop (no auto-merge/rebase)
+  git config --global pull.ff only >/dev/null 2>&1 || true
+
   git config --global push.default simple >/dev/null 2>&1 || true
   git config --global push.autoSetupRemote true >/dev/null 2>&1 || true
 }
@@ -246,6 +252,9 @@ git_pin_branch() {
   fi
 
   git -C "$repo_dir" branch --set-upstream-to "${remote}/${branch}" "$branch" >/dev/null 2>&1 || true
+  # Ensure plain `git pull` remains fast-forward only even if invoked outside our wrappers.
+  git -C "$repo_dir" config pull.ff only >/dev/null 2>&1 || true
+
   info "Pinned repo to ${branch} tracking ${remote}/${branch}"
 }
 
