@@ -130,18 +130,47 @@ get_home_for_user() {
 git_config() {
   info "Configuring git identity for user '${TARGET_USER}'..."
 
+  # When scm_setup is invoked from a whiptail/dialog menu, stdin/stdout may be
+  # redirected and prompts can end up effectively hidden "behind" the menu.
+  # Prefer /dev/tty when available so interactive questions remain visible.
+  local tty_in="/dev/tty"
+  local tty_out="/dev/tty"
+
+  prompt() {
+    # Usage: prompt "Question" <varname>
+    local question="${1:?question required}"
+    local __varname="${2:?varname required}"
+    local value=""
+
+    if [[ -r "${tty_in}" && -w "${tty_out}" ]]; then
+      # Print prompt to the terminal device directly.
+      printf '%s' "${question}" >"${tty_out}"
+      IFS= read -r value <"${tty_in}"
+    elif [[ -t 0 ]]; then
+      # Fallback for normal interactive use.
+      read -r -p "${question}" value
+    else
+      return 1
+    fi
+
+    printf -v "${__varname}" '%s' "${value}"
+  }
+
   # user.name
   if ! git config --global --get user.name >/dev/null 2>&1; then
     if [[ -n "${GIT_USER_NAME:-}" ]]; then
       git config --global user.name "${GIT_USER_NAME}"
       ok "Git user.name set."
-    elif [[ -t 0 ]]; then
+    elif [[ -t 0 || -r "${tty_in}" ]]; then
       local git_username
-      read -r -p "Enter your Git username: " git_username
+      if prompt "Enter your Git username: " git_username; then
       [[ -n "$git_username" ]] || { error "Username can't be empty"; return 1; }
       git config --global user.name "$git_username"
       ok "Git user.name set."
     else
+      warn "git user.name not set and no TTY available. Export GIT_USER_NAME to set it non-interactively."
+    fi
+  else
       warn "git user.name not set and no TTY available. Export GIT_USER_NAME to set it non-interactively."
     fi
   else
@@ -153,15 +182,20 @@ git_config() {
     if [[ -n "${GIT_USER_EMAIL:-}" ]]; then
       git config --global user.email "${GIT_USER_EMAIL}"
       ok "Git user.email set."
-    elif [[ -t 0 ]]; then
+    elif [[ -t 0 || -r "${tty_in}" ]]; then
       local git_email
-      while :; do
-        read -r -p "Enter your Git email: " git_email
-        [[ -n "$git_email" ]] && break
-        echo "Email can't be empty."
+      if prompt "Enter your Git email: " git_email; then
+        while [[ -z "$git_email" ]]; do
+          printf '%s\n' "Email can't be empty." >&2
+          prompt "Enter your Git email: " git_email || break
       done
+        if [[ -n "$git_email" ]]; then
       git config --global user.email "$git_email"
       ok "Git user.email set."
+        fi
+      else
+        warn "git user.email not set and no TTY available. Export GIT_USER_EMAIL to set it non-interactively."
+      fi
     else
       warn "git user.email not set and no TTY available. Export GIT_USER_EMAIL to set it non-interactively."
     fi
