@@ -1,0 +1,15 @@
+---
+# =============================================================================
+# homelab_2026.1 - Admin node playbook
+# =============================================================================
+# Purpose
+#   Baseline configuration for the admin node that runs this repo.
+# =============================================================================
+
+- name: Configure admin node
+  hosts: admin
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: admin_node

@@ -1,0 +1,15 @@
+---
+# =============================================================================
+# Role: active_directory (placeholder)
+# =============================================================================
+# Purpose
+#   This role is intentionally a stub in the baseline.
+#
+# Next step
+#   Answer the questionnaire items in docs/questionnaires.md and then implement
+#   the chosen stack (e.g. Kea vs ISC DHCP, Unbound vs BIND, Samba AD vs Windows).
+# =============================================================================
+
+- name: Notify placeholder role
+  ansible.builtin.debug:
+    msg: "active_directory is not implemented yet. See docs/questionnaires.md and docs/roadmap.md."

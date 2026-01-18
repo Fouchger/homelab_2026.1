@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  role_name: dns_server
+  author: homelab_2026.1 contributors
+  description: Placeholder role. Implement service deployment in a follow-up.
+  license: MIT
+  min_ansible_version: "2.15"
+
+dependencies: []

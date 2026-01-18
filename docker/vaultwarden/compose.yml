@@ -1,0 +1,23 @@
+---
+# =============================================================================
+# Vaultwarden (example)
+# =============================================================================
+# Purpose
+#   Operational secret store for your homelab.
+#
+# Developer notes
+#   - This is an example. Keep real environment values in SOPS and/or runtime secrets.
+# =============================================================================
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    ports:
+      - "8222:80"
+    volumes:
+      - ./data:/data
+    environment:
+      # Set this via SOPS or runtime, not in plain text.
+      # ADMIN_TOKEN: "..."
+      SIGNUPS_ALLOWED: "false"

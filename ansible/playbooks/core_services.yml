@@ -1,0 +1,21 @@
+---
+# =============================================================================
+# homelab_2026.1 - Core services playbook
+# =============================================================================
+# Purpose
+#   Placeholder playbook for DHCP, DNS, Active Directory, UDMS, and other services.
+#   Roles are stubbed so we can add implementations without changing the menu/workflow.
+# =============================================================================
+
+- name: Configure core services (placeholders)
+  hosts: core_services
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: dhcp_server
+      tags: [dhcp]
+    - role: dns_server
+      tags: [dns]
+    - role: active_directory
+      tags: [ad]

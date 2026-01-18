@@ -1,0 +1,4 @@
+---
+homelab_project_name: "homelab_2026.1"
+admin_install_codeserver: true
+admin_install_docker: false

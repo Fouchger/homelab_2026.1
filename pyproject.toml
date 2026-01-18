@@ -1,0 +1,8 @@
+[project]
+name = "homelab_2026"
+version = "0.1.0"
+description = "Homelab_2026.1 orchestration tooling"
+requires-python = ">=3.12"
+
+[tool.ruff]
+extend = "ruff.toml"

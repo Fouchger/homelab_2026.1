@@ -1,0 +1,14 @@
+---
+admin_install_codeserver: true
+admin_install_docker: false
+admin_base_packages:
+  - ca-certificates
+  - curl
+  - git
+  - jq
+  - make
+  - python3
+  - python3-venv
+  - python3-pip
+  - pipx
+  - unzip

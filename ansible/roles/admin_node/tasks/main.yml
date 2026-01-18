@@ -1,0 +1,37 @@
+---
+# =============================================================================
+# Role: admin_node
+# =============================================================================
+# Developer notes
+#   - Keep tasks idempotent.
+#   - Avoid hard-coding environment assumptions; use variables and questionnaires.
+# =============================================================================
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ admin_base_packages }}"
+    state: present
+    install_recommends: false
+
+- name: Install code-server (Proxmox VE community script)
+  ansible.builtin.shell: |
+    set -euo pipefail
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/tools/addon/coder-code-server.sh)"
+  args:
+    executable: /bin/bash
+    creates: /usr/bin/code-server
+  when: admin_install_codeserver
+
+- name: Install Docker (optional)
+  ansible.builtin.shell: |
+    set -euo pipefail
+    curl -fsSL https://get.docker.com | sh
+  args:
+    executable: /bin/bash
+    creates: /usr/bin/docker
+  when: admin_install_docker

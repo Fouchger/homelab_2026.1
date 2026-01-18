@@ -1,0 +1,21 @@
+# Generated runtime config
+/generated_configs/
+
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfvars
+
+# Python
+__pycache__/
+.venv/
+
+# Secrets
+secrets/**/*.dec
+secrets/**/plain*
+*.env
+
+# Vaultwarden runtime
+/docker/vaultwarden/data/

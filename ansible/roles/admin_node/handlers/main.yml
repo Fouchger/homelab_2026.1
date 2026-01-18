@@ -1,0 +1,6 @@
+---
+- name: Restart code-server
+  ansible.builtin.service:
+    name: code-server
+    state: restarted
+  when: admin_install_codeserver | bool

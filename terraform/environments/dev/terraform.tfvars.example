@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars (do not commit) or generate via scripts/gen_tfvars.sh
+
+proxmox_endpoint  = "https://PROXMOX_HOST:8006/api2/json"
+proxmox_api_token = "user@realm!tokenid=secret"
+proxmox_insecure  = false
+proxmox_node_name = "pve"
